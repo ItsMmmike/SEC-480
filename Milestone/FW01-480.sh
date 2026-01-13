@@ -45,7 +45,7 @@ set nat source rule 10 translation address 'masquerade'
 
 # Set SSH Listen Address to LAN only
 delete service ssh listen-address '0.0.0.0'
-set service ssh listen-address '172.16.150.2'
+set service ssh listen-address '192.168.30.2'
 
 # Save Configuration
 commit
