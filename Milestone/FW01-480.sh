@@ -19,7 +19,7 @@ set interfaces ethernet eth1 address '192.168.30.2/24'
 set interfaces ethernet eth1 description 'SEC480-LAN'
 
 # DNS Settings
-set system name-server '10.0.17.2' #SET_UPSTREAM_DNS_HERE
+set system name-server '192.168.4.4' #SET_UPSTREAM_DNS_HERE
 
 # Default Gateway
 set protocols static route 0.0.0.0/0 next-hop 10.0.17.2 #SET_UPSTREAM_DNS_HERE
