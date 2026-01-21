@@ -13,16 +13,16 @@ fi
 configure
 
 # Network Adapter Config
-set interfaces ethernet eth0 address '10.0.17.160/24' #NET_TBD
+set interfaces ethernet eth0 address '192.168.3.31/24' #NET_TBD
 set interfaces ethernet eth0 description 'SEC480-WAN'
-set interfaces ethernet eth1 address '192.168.30.2/24'
+set interfaces ethernet eth1 address '10.0.17.2/24'
 set interfaces ethernet eth1 description 'SEC480-LAN'
 
 # DNS Settings
 set system name-server '192.168.4.4' #SET_UPSTREAM_DNS_HERE
 
 # Default Gateway
-set protocols static route 0.0.0.0/0 next-hop 10.0.17.2 #SET_UPSTREAM_DNS_HERE
+set protocols static route 0.0.0.0/0 next-hop 192.168.3.250 #SET_UPSTREAM_DNS_HERE
 
 # Set Hostname
 set system host-name 'FW01-480'
@@ -32,20 +32,20 @@ commit
 
 # DNS Forwarding for DMZ and LAN NET
 
-set service dns forwarding allow-from '192.168.30.0/24'
-set service dns forwarding listen-address '192.168.30.2'
+set service dns forwarding allow-from '10.0.17.0/24'
+set service dns forwarding listen-address '10.0.17.2'
 
 set service dns forwarding system
 
 # NAT Config
 set nat source rule 10 description 'NAT FROM LAN to WAN'
 set nat source rule 10 outbound-interface 'eth0'
-set nat source rule 10 source address '192.168.30.0/24'
+set nat source rule 10 source address '10.0.17.0/24'
 set nat source rule 10 translation address 'masquerade'
 
 # Set SSH Listen Address to LAN only
 delete service ssh listen-address '0.0.0.0'
-set service ssh listen-address '192.168.30.2'
+set service ssh listen-address '10.0.17.2'
 
 # Save Configuration
 commit
