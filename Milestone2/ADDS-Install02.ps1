@@ -1,5 +1,8 @@
 # Pt.2 Script used to setup and deploy DNS and DHCP on Windows Server Host (Post AD Install)
 
+## Grab Domain Name Info
+$domain = (Get-CimInstance Win32_ComputerSystem).Domain
+
 ## Start Post-Install Setup for DNS
 Add-DnsServerPrimaryZone -Name "$domain" -ReplicationScope "Forest" -PassThru
 Add-DnsServerPrimaryZone -NetworkID "10.0.17.0/24" -ReplicationScope "Forest"
