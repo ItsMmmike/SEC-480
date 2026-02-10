@@ -15,4 +15,4 @@ Add-DnsServerResourceRecordPtr -Name "4" -ZoneName "17.0.10.in-addr.arpa" -PtrDo
 
 ## Start Post-Install Setup for DHCP
 Add-DhcpServerv4Scope -Name "Infra DHCP" -StartRange 10.0.17.101 -EndRange 10.0.17.150 -SubnetMask 255.255.255.0 -State Active
-Set-DhcpServerv4OptionValue -ScopeId 10.10.17.0 -Router 10.0.17.2 -DnsServer 10.0.17.4
+Set-DhcpServerv4OptionValue -ScopeId 10.0.17.0 -Router 10.0.17.2 -DnsServer 10.0.17.4
