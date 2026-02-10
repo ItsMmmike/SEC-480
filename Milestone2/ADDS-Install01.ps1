@@ -1,5 +1,5 @@
 ### Script used to install new ADDS, DNS, and DHCP services on Windows Server Host
-# Run with Admin User --> 'Invoke-WebRequest -Uri "" -Outfile .\ADDS-Install02.ps1'
+# Run with Admin User --> 'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ItsMmmike/SEC-480/refs/heads/main/Milestone2/ADDS-Install01.ps1" -Outfile .\ADDS-Install01.ps1'
 
 ## Install ADDS, DNS, and DHCP Features for Windows Server Host
 Install-WindowsFeature -Name AD-Domain-Services,DNS,DHCP -IncludeManagementTools
