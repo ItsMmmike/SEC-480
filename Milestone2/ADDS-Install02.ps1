@@ -4,8 +4,7 @@
 $domain = (Get-CimInstance Win32_ComputerSystem).Domain
 
 ## Start Post-Install Setup for DNS
-Add-DnsServerPrimaryZone -Name "$domain" -ReplicationScope "Forest" -PassThru
-Add-DnsServerPrimaryZone -NetworkID "10.0.17.0/24" -ReplicationScope "Forest"
+Add-DnsServerPrimaryZone -NetworkID "10.0.17.0/24" -ReplicationScope "Forest" # Reverse Lookup for DNS
 
 # Configure additional DNS Entries for Server
 Add-DnsServerResourceRecordA -Name "fw01-480" -ZoneName "$domain" -IPv4Address "10.0.17.2" -CreatePtr # FW
