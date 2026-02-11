@@ -34,9 +34,9 @@ while($true) {
   $usr = Read-Host -Prompt "Please provide a username for New Domain Admin"
   $check = Read-Host -Prompt "Confirm new user '$usr'? [Y/n]"
   Write-Host ""
-  if ($prompt -eq "Y") {
+  if ($check -eq "Y") {
     break
-  } elseif ($prompt -eq "y") {
+  } elseif ($check -eq "y") {
     break
   } else {
     continue
@@ -49,7 +49,6 @@ while($true) {
   $pw2 = Read-Host "Re-Enter Password" -AsSecureString
   $pw1_check = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pw1))
   $pw2_check = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pw2))
-
   if ($pw1_check -ceq $pw2_check) {
       Write-Host "Password Set!" -ForegroundColor Green
       break
