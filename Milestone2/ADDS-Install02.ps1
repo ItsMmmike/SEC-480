@@ -1,4 +1,4 @@
-# Pt.2 Script used to setup and deploy DNS and DHCP on Windows Server Host (Post AD Install)
+# Pt.2 Script used to setup and deploy DNS and DHCP on Windows Server Host as well as RDP and provision a new Domain Admin User (Post AD Install)
 
 ## Grab Domain Name Info
 $domain = (Get-CimInstance Win32_ComputerSystem).Domain
@@ -21,3 +21,44 @@ Add-DhcpServerSecurityGroup
 
 # Authorize DHCP Server
 Add-DhcpServerInDC
+
+## Enable RDP
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 # Enable RDP
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop" # Allow RDP through FW
+
+## Create New user
+
+# Prompt User Creation
+Write-Host "==="
+while($true) {
+  $usr = Read-Host -Prompt "Please provide a username for New Domain Admin:"
+  $check = Read-Host -Prompt "Confirm new user '$usr'? [Y/n]"
+  Write-Host ""
+  if ($prompt -eq "Y") {
+    break
+  } elseif ($prompt -eq "y") {
+    break
+  } else {
+    continue
+  }
+}
+
+# Prompt User Password
+while($true) {
+  $pw1 = Read-Host "Enter Password" -AsSecureString
+  $pw2 = Read-Host "Re-Enter Password" -AsSecureString
+  $pw1_check = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pw1))
+  $pw2_check = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pw2))
+
+  if ($pw1_check -ceq $pw2_check) {
+      Write-Host "Password Set!" -ForegroundColor Green
+      break
+  } else {
+      Write-Host "Passwords do not match - Please try again." -ForegroundColor Yellow
+      continue
+  }
+}
+
+# Create User and set as Domain Admin
+New-ADUser -Name $usr -AccountPassword $pw1 -enabled:$true
+Add-ADGroupMember -Identity "Domain Admins" -Members $usr
