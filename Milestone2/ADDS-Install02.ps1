@@ -31,7 +31,7 @@ Enable-NetFirewallRule -DisplayGroup "Remote Desktop" # Allow RDP through FW
 # Prompt User Creation
 Write-Host "==="
 while($true) {
-  $usr = Read-Host -Prompt "Please provide a username for New Domain Admin:"
+  $usr = Read-Host -Prompt "Please provide a username for New Domain Admin"
   $check = Read-Host -Prompt "Confirm new user '$usr'? [Y/n]"
   Write-Host ""
   if ($prompt -eq "Y") {
