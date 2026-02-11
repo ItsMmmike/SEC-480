@@ -17,5 +17,8 @@ Add-DnsServerResourceRecordPtr -Name "4" -ZoneName "17.0.10.in-addr.arpa" -PtrDo
 Add-DhcpServerv4Scope -Name "Infra DHCP" -StartRange 10.0.17.101 -EndRange 10.0.17.150 -SubnetMask 255.255.255.0 -State Active
 Set-DhcpServerv4OptionValue -ScopeId 10.0.17.0 -Router 10.0.17.2 -DnsServer 10.0.17.4
 
+# Need to add user to authorize DHCP Server
+Add-DhcpServerSecurityGroup
+
 # Authorize DHCP Server
 Add-DhcpServerInDC
