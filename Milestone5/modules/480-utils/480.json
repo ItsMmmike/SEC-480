@@ -1,0 +1,10 @@
+{
+"vcenter_server": "vcenter.michael.local",
+"esxi_host": "super21.michael.local",
+"datastore": "datastore2-super21",
+"snapshot": "Base",
+"default_net": "480-Internal",
+"basevm_folder": "BaseVMs",
+"range_folder": "Range",
+"temp_folder": "Temp"
+}
