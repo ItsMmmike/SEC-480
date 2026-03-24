@@ -56,7 +56,6 @@ function selectVM([string] $folder) {
         $index = 0
         foreach ($i in $basevms) {
             $index += 1
-            
             Write-Host "[$($index)] $($i.Name)"
         }
 
@@ -175,4 +174,181 @@ function createBaseVM($config, $vm_target)
     # Cleanup temp linked clone VM
     Get-VM $linkedname | Remove-VM -Confirm:$false
 
+}
+
+### =====================
+### Milestone 6 Functions:
+
+## New-Network Function | Used to create a new virtual switch and portgroup
+# Input: config + Net Name
+function New-Network([PSCustomObject]$config, [String]$netname){
+    # Import var
+    $vmhost = $config.esxi_host
+    
+    # Create port group
+    try {
+        New-VirtualSwitch -VMHost "$vmhost" -Name "$netname-vswitch" -ErrorAction Stop | Out-Null
+        # ^^We need to run a check to see if vswitch exists
+
+        # Grab info from new created vswitch
+        $vswitch = Get-VirtualSwitch -VMHost $vmhost -Name "$netname-vswitch"
+        
+        # User confirm task complete
+        Write-Host "'$netname-vswitch' deployed successfully!" -ForegroundColor Yellow
+    } catch {
+        Write-Host "'$netname-vwitch' already exists... continuing task" -ForegroundColor Yellow
+    }
+
+    # Create new portgroup on new vswitch
+    try {
+        New-VirtualPortGroup -VirtualSwitch $vswitch -Name "$netname-LAN" -ErrorAction Stop | Out-Null
+        # ^^We need to run a check to see if vswitch exists
+
+        # User confirm task complete
+        Write-Host "'$netname-LAN' deployed successfully!" -ForegroundColor Yellow
+        Write-Host "Nothing left to do, Task complete!" -ForegroundColor Green
+
+    } catch {
+        Write-Host "'$netname-LAN' already exists..." -ForegroundColor Yellow
+        Write-Host "Nothing left to do, Task complete!" -ForegroundColor Green
+    }
+}
+
+## Get-IP Function | Grabs IP and MAC address from the first interface of a named VM
+function Get-IP([String]$vm) {
+    # Grab IP + MAC adapter 1 info from VM
+    $mac = (Get-VM -Name "$vm" | Get-NetworkAdapter)[0].MacAddress
+    $getvmnet = Get-VM -Name "$vm"
+
+    Write-Host "Grabbing IP and MAC Info for VM - '$vm'" -ForegroundColor Yellow
+    Write-Host "======================================" 
+    
+    # IP Address for net adapter 1
+    Write-Host "IP:" $getvmnet.Guest.IPAddress[0]
+
+    # MAC Address for net adapter 1
+    Write-Host "MAC:" $mac
+    Write-Host ""
+}
+
+## Set-VMPower Function | User Selects VM and gets prompted to turn on/off
+function Set-VMPower() {
+    
+    # Select VM from list
+    Write-Host "================================================="
+    Write-Host "Please select a VM from the list to power manage:"
+    $index = 1
+    $vms = Get-VM 
+
+    foreach($i in $vms) {
+        Write-Host "[$($index)] $($i.Name)"
+        $index += 1
+    }
+
+    $selection = Read-Host "Enter Index Number Here"
+
+    if ($selection -in 1..$vms.count) {
+        $selectedVM = $vms[$selection -1].Name
+        Write-Host "VM '$selectedVM' was selected" -ForegroundColor Yellow
+    } else {
+        Write-Host "Index out of range, please try again" -ForegroundColor Yellow
+        return
+    }
+    
+    # Set Power options for selected VMs + Prompt user if they would like to turn VM [On] or [Off]
+    $vmstate = (Get-VM -Name "$selectedVM").PowerState
+    Write-Host "Current power state of VM '$selectedVM': $vmstate"
+    $setStatus = Read-Host "Would you like to turn the VM On or Off (on/off)"
+
+    if ($setStatus -ilike "on") {
+        # Check if VM is already on --> update user if this is the case
+        if ($vmstate -eq "PoweredOn") {
+            Write-Host "VM '$selectedVM' is already Powered On" -ForegroundColor Yellow
+        } else {
+            Write-Host "Attempting to Power On VM..." -ForegroundColor Yellow
+            Start-VM -VM "$selectedVM" -RunAsync -Confirm:$true
+            Write-Host "Task Complete!" -ForegroundColor Green
+        }
+    } elseif ($setStatus -ilike "off") {
+        # Check if VM is already off --> update user if this is the case
+        if ($vmstate -eq "PoweredOff") {
+            Write-Host "VM '$selectedVM' is already Powered Off" -ForegroundColor Yellow
+        } else {
+            Write-Host "Attempting to Power Off VM..." -ForegroundColor Yellow
+            Stop-VM -VM "$selectedVM" -RunAsync -Confirm:$true
+            Write-Host "Task Complete!" -ForegroundColor Green
+        }
+    } else {
+        Write-Host "Invalid option, please try again" -ForegroundColor Yellow
+    }
+}
+
+# Set-Network Function
+function Set-Network () {
+    # Select VM from list
+    Write-Host "================================================="
+    Write-Host "Please select a VM from the list to configure networking:"
+    $index = 1
+    $vms = Get-VM 
+
+    foreach($i in $vms) {
+        Write-Host "[$($index)] $($i.Name)"
+        $index += 1
+    }
+
+    $selection = Read-Host "Enter Index Number Here"
+
+    if ($selection -in 1..$vms.count) {
+        $selectedVM = $vms[$selection -1].Name
+        Write-Host "VM '$selectedVM' was selected" -ForegroundColor Yellow
+    } else {
+        Write-Host "Index out of range, please try again" -ForegroundColor Yellow
+        return
+    }
+
+    # Get Index of network adapters for specified VM
+    Write-Host ""
+    Write-Host "================================================================"
+    Write-Host "Please select a network adapter on VM '$selectedVM' to configure"
+    $index2 = 1
+    $netAdapt = Get-VM -Name "$selectedVM" | Get-NetworkAdapter
+
+    foreach($iface in $netAdapt) {
+        Write-Host "[$($index2)] $($iface.Name)"
+        $index2 += 1
+    }
+
+    $selection2 = Read-Host "Enter Index Number Here"
+
+    if ($selection2 -in 1..$netadapt.count) {
+        $configAdapt = $netAdapt[$selection2 -1]
+        Write-Host "Interface '$($configAdapt.Name)' was selected" -ForegroundColor Yellow
+    } else {
+        Write-Host "Index out of range, please try again" -ForegroundColor Yellow
+        return
+    }
+
+    # User selects network from list for VM Net Adapter
+    Write-Host "Please select a network to assign to adapter"
+
+    $index3 = 1
+    $networks = Get-VirtualNetwork
+
+    foreach ($net in $networks) {
+        Write-Host "[$($index3)] $($net.Name)"
+        $index3 += 1
+    }
+
+    $selection3 = Read-Host "Enter Index Number Here"
+
+    if ($selection3 -in 1..$networks.count) {
+        $netSelection = $networks[$selection3 -1].Name
+        Write-Host "Network '$netSelection' was selected" -ForegroundColor Yellow
+        Write-Host "Configuring Network Adapter..."
+        # Set Network Adapter Settings using Selected Config
+        Set-NetworkAdapter -NetworkAdapter $configAdapt -NetworkName "$netSelection" -Confirm:$true
+    } else {
+        Write-Host "Index out of range, please try again" -ForegroundColor Yellow
+        return
+    }
 }
