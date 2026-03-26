@@ -1,7 +1,7 @@
 interfaces {
     ethernet eth0 {
         address "{{ wan_ip }}"
-        hw-id "00:50:56:bf:0a:3f"
+        hw-id "{{ mac_address }}"
     }
     ethernet eth1 {
         address "{{ lan_ip }}"
