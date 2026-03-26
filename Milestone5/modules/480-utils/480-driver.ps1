@@ -28,6 +28,8 @@ Set-Network
 # Start/Stop VM Function (for fw-blue21)
 Set-VMPower
 
+# Show output for "Get-IP("fw-blue21")" --> Then run ansible demo
+
 ## Old
 # =========
 # Select VM

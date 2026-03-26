@@ -1,0 +1,14 @@
+---
+blue:
+  hosts:
+    blue21-fw:
+      ansible_host: 10.0.17.200
+      ansible_user: vyos
+      hostname: blue21-fw
+      mac_address: 00:50:56:bf:0a:3f
+      wan_ip: 10.0.17.200/24
+      lan_ip: 10.0.5.2/24
+      lan_net: 10.0.5.0/24
+      def_ftw: 10.0.17.2
+      nameserver: 10.0.17.4
+      dns_listen: 10.0.5.2
