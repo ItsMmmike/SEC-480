@@ -16,17 +16,17 @@ connectVCenter -server $config.vcenter_server
 # Create New Virtual Network
 New-Network -config $config -netname "blue21"
 
-# Get IP and MAC of specified VM
-Get-IP("fw-blue21")
-
 # Create FW-Blue21 Linked Clone
 cloneVM -config $config -selected_vm "vyos.base"
 
-# Set Network for fw-blue21 to be on "VM Network" + "blue21-LAN"
+# Set Network for fw-blue21 to be on "480-internal" + "blue21-LAN"
 Set-Network
 
 # Start/Stop VM Function (for fw-blue21)
 Set-VMPower
+
+# Get IP and MAC of specified VM
+Get-IP("fw-blue21")
 
 # Show output for "Get-IP("fw-blue21")" --> Then run ansible demo
 
