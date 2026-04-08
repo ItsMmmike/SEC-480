@@ -1,0 +1,17 @@
+---
+all:
+  children:
+    rocky:
+      hosts:
+        rocky-01:
+          ansible_host: 10.0.5.10
+        rocky-02:
+          ansible_host: 10.0.5.11
+        rocky-03:
+          ansible_host: 10.0.5.12
+    ubuntu:
+      hosts:
+        ubuntu-01:
+          ansible_host: 10.0.5.30
+        ubuntu-02:
+          ansible_host: 10.0.5.31
