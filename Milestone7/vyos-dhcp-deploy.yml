@@ -1,0 +1,15 @@
+- name: configure vyos dhcp server
+  hosts: blue21-fw
+  tasks:
+
+  - name: set dhcp server config
+    vyos_config:
+    save: yes
+    lines:
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} authoritative"
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} subnet {{ lan_net }} default-router {{ def_gtw }}"
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} subnet {{ lan_net }} domain-name {{ domain_name }}"
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} subnet {{ lan_net }} lease 86400"
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} subnet {{ lan_net }} name-server {{ nameserver }}"
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} subnet {{ lan_net }} range {{ dhcp-net }}--POOL start 10.0.5.75"
+      - "set service dhcp-server shared-network-name {{ dhcp-net }} subnet {{ lan_net }} range {{ dhcp-net }}--POOL stop 10.0.5.125"
