@@ -12,3 +12,6 @@ blue:
       def_gtw: 10.0.17.2
       nameserver: 10.0.17.4
       dns_listen: 10.0.5.2
+      domain_name: blue21.local
+      dhcp-net: BLUE21
+      
