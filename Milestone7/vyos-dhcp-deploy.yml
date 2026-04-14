@@ -10,7 +10,7 @@
       save: yes
       lines:
         - "set service dhcp-server shared-network-name {{ dhcp_net }} authoritative"
-        - "set service dhcp-server shared-network-name {{ dhcp_net }} subnet {{ lan_net }} default-router {{ def_gtw }}"
+        - "set service dhcp-server shared-network-name {{ dhcp_net }} subnet {{ lan_net }} default-router {{ blue_gtw }}"
         - "set service dhcp-server shared-network-name {{ dhcp_net }} subnet {{ lan_net }} domain-name {{ domain_name }}"
         - "set service dhcp-server shared-network-name {{ dhcp_net }} subnet {{ lan_net }} lease 86400"
         - "set service dhcp-server shared-network-name {{ dhcp_net }} subnet {{ lan_net }} name-server {{ nameserver }}"

@@ -4,14 +4,33 @@ all:
     rocky:
       hosts:
         rocky-01:
-          ansible_host: 10.0.5.10
+          ansible_host: 10.0.5.75
+          hostname: rocky-01
+          lan_ip: 10.0.5.10
         rocky-02:
-          ansible_host: 10.0.5.11
+          ansible_host: 10.0.5.76
+          hostname: rocky-02
+          lan_ip: 10.0.5.11
         rocky-03:
-          ansible_host: 10.0.5.12
+          ansible_host: 10.0.5.77
+          hostname: rocky-03
+          lan_ip: 10.0.5.12
+      vars:
+        device: ens33
     ubuntu:
       hosts:
         ubuntu-01:
-          ansible_host: 10.0.5.30
+          ansible_host: 10.0.5.83
+          hostname: ubuntu-01
+          lan_ip: 10.0.5.30
         ubuntu-02:
-          ansible_host: 10.0.5.31
+          ansible_host: 10.0.5.84
+          hostname: ubuntu-02
+          lan_ip: 10.0.5.31
+      vars:
+        device: ens34
+  vars:
+    ansible_user: deployer
+    public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJXBhxNPG5dmXnJDJJn/ifpjQkhRz4+owE0K8wyb5ZuQ mike-adm@mgmt01-copper"
+    gateway: 10.0.5.2 
+    name_server: 10.0.5.2
