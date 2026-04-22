@@ -1,0 +1,16 @@
+# Playbook used to provision rocky hosts
+- name: sus activities for wazuh agent
+  hosts: agent
+
+  tasks:
+    - name: Cool activity # Fail attempt to run command as different user
+      ansible.builtin.shell: |
+        echo "very cool text here"
+      become: true
+      become_user: "root"
+      ignore_errors: true
+      vars:
+        ansible_become_pass: "very_secure_password_here"
+      delegate_to: agent
+   
+

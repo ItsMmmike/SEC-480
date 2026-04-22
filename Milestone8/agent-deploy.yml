@@ -1,0 +1,18 @@
+# Playbook used to provision rocky hosts
+- name: wazuh server docker deploy
+  hosts: agent
+
+  tasks:
+    - name: Configure wazuh agent
+      ansible.builtin.shell: |
+        cd ~/
+        sudo curl -o wazuh-agent-4.7.5-1.x86_64.rpm https://packages.wazuh.com/4.x/yum/wazuh-agent-4.7.5-1.x86_64.rpm && sudo WAZUH_MANAGER='10.0.5.10' rpm -ihv wazuh-agent-4.7.5-1.x86_64.rpm
+      become: true
+
+    - name: Configure wazuh agent service
+      ansible.builtin.systemd_service:
+        name: wazuh-agent.service
+        enabled: true
+        state: restarted
+        daemon_reload: true
+      become: true

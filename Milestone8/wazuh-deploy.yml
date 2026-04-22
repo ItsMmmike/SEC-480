@@ -1,0 +1,49 @@
+# Playbook used to provision rocky hosts
+- name: wazuh server docker deploy
+  hosts: wazuh_server
+
+  tasks:
+    - name: Add docker repo
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/rhel/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-cd.repo
+        mode: '0644'
+      become: true
+
+    - name: Install docker and docker compose
+      ansible.builtin.dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: latest
+        update_cache: yes
+      become: true
+
+    - name: Start and enable docker
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+      become: true
+
+    - name: Clone wazuh docker repo
+      ansible.builtin.git:
+        repo: 'https://github.com/wazuh/wazuh-docker.git'
+        dest: ~/wazuh-docker
+        version: v4.7.5
+
+    - name: Create SSL certs
+      ansible.builtin.shell: |
+        cd ~/wazuh-docker/single-node
+        sudo docker compose -f generate-indexer-certs.yml run --rm generator
+      become: true
+
+    - name: Start docker install of wazuh server
+      ansible.builtin.shell: |
+        cd ~/wazuh-docker/single-node
+        sudo docker compose up -d
+      become: true
+
