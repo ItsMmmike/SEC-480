@@ -10,8 +10,8 @@ all:
         agent:
           ansible_host: 10.0.5.77
           hostname: wazuh-client
-    vars:
-      device: ens33
+      vars:
+        device: ens33
   vars:
     ansible_user: deployer
     gateway: 10.0.5.2 
