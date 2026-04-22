@@ -18,6 +18,7 @@
           - containerd.io
           - docker-buildx-plugin
           - docker-compose-plugin
+          - git
         state: latest
         update_cache: yes
       become: true
@@ -37,13 +38,12 @@
 
     - name: Create SSL certs
       ansible.builtin.shell: |
-        cd ~/wazuh-docker/single-node
+        cd /home/deployer/wazuh-docker/single-node
         sudo docker compose -f generate-indexer-certs.yml run --rm generator
       become: true
 
     - name: Start docker install of wazuh server
       ansible.builtin.shell: |
-        cd ~/wazuh-docker/single-node
+        cd /home/deployer/wazuh-docker/single-node
         sudo docker compose up -d
       become: true
-
