@@ -3,10 +3,18 @@
   hosts: wazuh_server
 
   tasks:
+    - name: Increase memory map area
+      ansible.posix.sysctl:
+        name: vm.max_map_count
+        value: '262144'
+        state: present
+        reload: yes
+      become: true
+
     - name: Add docker repo
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/rhel/docker-ce.repo
-        dest: /etc/yum.repos.d/docker-cd.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
         mode: '0644'
       become: true
 
@@ -46,4 +54,17 @@
       ansible.builtin.shell: |
         cd /home/deployer/wazuh-docker/single-node
         sudo docker compose up -d
+      become: true
+
+    - name: Allow Wazuh Ports
+      ansible.posix.firewalld:
+        port: "{{ item.port }}/{{ item.type }}"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      loop:
+        - { port: '1514', type: 'tcp' }
+        - { port: '1515', type: 'tcp' }
+        - { port: '443', type: 'tcp' }
+        - { port: '1514', type: 'udp' }
       become: true

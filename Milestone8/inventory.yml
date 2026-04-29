@@ -4,11 +4,11 @@ all:
     wazuh:
       hosts:
         wazuh_server:
-          ansible_host: 10.0.5.76
+          ansible_host: 10.0.5.10
           hostname: wazuh-server
           lan_ip: 10.0.5.10
         agent:
-          ansible_host: 10.0.5.77
+          ansible_host: 10.0.5.81
           hostname: wazuh-client
       vars:
         device: ens33
