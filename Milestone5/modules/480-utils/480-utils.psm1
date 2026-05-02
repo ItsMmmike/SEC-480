@@ -352,3 +352,74 @@ function Set-Network () {
         return
     }
 }
+
+### =====================
+### Milestone 7 Functions:
+
+# Function used to bulk deploy VMs
+function Deploy-VM () {
+    # Vars
+    $vm = Get-VM -Name "$selected_vm"
+    $snapshot = Get-Snapshot -VM $vm -Name $config.snapshot
+    $vmhost = Get-VMHost -Name $config.esxi_host
+    $ds = Get-Datastore -Name $config.datastore
+    $vmnetwork = "blue21-LAN"
+
+
+    # Select VM
+    $selected_vm = selectVM($config.basevm_folder)
+
+    # Create linked clone VMs
+    $newname = Read-Host "Please enter a new base name for deployment VMs"
+    $deploy_num = Read-Host "How many VMs to deploy"
+    foreach ($i in 1..$deploy_num) {
+        $newvm = New-VM -LinkedClone -Name "$newname-0$i" -VM $vm -ReferenceSnapshot $snapshot -VMHost $vmhost -Datastore $ds -Confirm:$false
+        $newvm | New-Snapshot -Name "Base"
+
+        # Set network onto blue21-LAN
+        $adapter = (Get-VM -Name "$newname-0$i" | Get-NetworkAdapter)[0]
+        Set-NetworkAdapter -NetworkAdapter $adapter -NetworkName "$vmnetwork" -Confirm:$false
+
+        # Set System Memory
+        Set-VM -VM "$newname-0$i" -MemoryGB 4 -Confirm:$false
+
+        # Start VMs
+        Start-VM -VM "$newname-0$i" -RunAsync -Confirm:$false
+        
+        # Delay next deployment to avoid dhcp issues on ubuntu
+        Start-Sleep -s 15
+    }
+
+    # Wait for system power on
+    #Start-Sleep -s 120
+
+    # Get IP and MAC of specified VM
+    foreach ($i in 1..$deploy_num) {
+        Get-IP("$newname-0$i")
+    }
+}
+
+### =====================
+### Milestone 9 Functions:
+
+# Script used to set IP on windows VM host
+function Set-WinIP () {
+    
+    Write-Host "Configuring IP for Windows VM Host..." -ForegroundColor Yellow
+    # Vars
+    $vm = Read-Host -Prompt "Enter VM to configure" # blue21_DC-01
+    $user = Read-Host -Prompt "Please enter guest user to run command" 
+    $pass = Read-Host -Prompt "Please enter the password for the guest user" -AsSecureString
+    $pass2 = [System.Net.NetworkCredential]::new("", $pass).Password
+    $script = @"
+netsh interface ip set address "Ethernet0" static 10.0.5.5 255.255.255.0 10.0.5.2
+netsh interface ip set dnsservers "Ethernet0" static 10.0.5.2
+ipconfig /all
+"@
+
+    # Command
+    $output = Invoke-VMScript -VM "$vm" -ScriptText "$script" -GuestUser "$user" -GuestPassword "$pass2" -ScriptType PowerShell
+    Write-Host $output.ScriptOutput
+    Write-Host "Configuration Complete!" -ForegroundColor Green
+
+}
