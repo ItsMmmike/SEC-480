@@ -56,7 +56,7 @@
 
     - name: Copy OU script
       ansible.windows.win_copy:
-        src: ~/deploy_ou.ps1
+        src: ~/Documents/SEC-480/Milestone9/deploy_ou.ps1
         dest: C:\Users\Administrator\deploy_ou.ps1
 
     - name: Run OU script
