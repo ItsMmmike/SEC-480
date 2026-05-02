@@ -55,10 +55,10 @@
         seconds: 90
 
     - name: Copy OU script
-      ansible.windows.win_copy:
+      ansible.builtin.copy:
         src: ~/Documents/SEC-480/Milestone9/deploy_ou.ps1
-        dest: C:\Users\Administrator\deploy_ou.ps1
+        dest: C:\Users\deployer\deploy_ou.ps1
 
     - name: Run OU script
       ansible.windows.win_shell: |
-        powershell -ExecutionPolicy Bypass -File C:\Users\Administrator\deploy_ou.ps1
+        powershell -ExecutionPolicy Bypass -File C:\Users\deployer\deploy_ou.ps1
